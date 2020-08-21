@@ -4,7 +4,7 @@ namespace App;
 
 use App\Product;
 use App\Scopes\SellerScope;
-use Illuminate\Foundation\Auth\User;
+use App\User;
 
 class Seller extends User
 {

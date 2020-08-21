@@ -4,7 +4,7 @@ namespace App;
 
 use App\Transaction;
 use App\Scopes\BuyerScope;
-use Illuminate\Foundation\Auth\User;
+use App\User;
 
 class Buyer extends User
 {

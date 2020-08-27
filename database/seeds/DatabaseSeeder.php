@@ -5,6 +5,7 @@ use App\Category;
 use App\Product;
 use App\Transaction;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +23,11 @@ class DatabaseSeeder extends Seeder
         Product::truncate();
         Transaction::truncate();
         DB::table('category_product')->truncate();
+
+        User::flushEventListeners();
+        Category::flushEventListeners();
+        Product::flushEventListeners();
+        Transaction::flushEventListeners();
 
         $usersQuantity = 1000;
         $categoriesQuantity = 30;

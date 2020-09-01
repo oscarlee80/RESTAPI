@@ -17,7 +17,7 @@
         "laravel/homestead": "^10.11",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.1",
-        "sparkpost/php-sparkpost": "^2.2"
+        "spatie/laravel-fractal": "^5.7"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

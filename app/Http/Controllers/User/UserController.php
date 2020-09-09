@@ -13,9 +13,13 @@ class UserController extends ApiController
 {
     public function __construct()
     {
-        parent::__construct();
-
+        $this->middleware('client.credentials')->only(['store', 'resend']);
+        $this->middleware('auth:api')->except(['store', 'resend', 'verify']);
         $this->middleware('transform.input:' . UserTransformer::class)->only(['store', 'update']);
+        $this->middleware('scope:manage-account')->only(['show', 'update']);
+        $this->middleware('can:view,user')->only('show');
+        $this->middleware('can:update,user')->only('update');
+        $this->middleware('can:delete,user')->only('destroy');
     }
     /**
      * Display a listing of the resource.
@@ -24,6 +28,8 @@ class UserController extends ApiController
      */
     public function index()
     {
+        $this->allowedAdminAction();
+
         $users = User::all();
         return $this->showAll($users);
         //return $users;
@@ -74,29 +80,31 @@ class UserController extends ApiController
      */
     public function update(Request $request, User $user)
     {
+        
         $rules = [
             'email' => 'email|unique:users,email,' . $user->id,
             'password' => 'min:6|confirmed',
             'admin' => 'in:' . User::ADMIN_USER . ',' . User::REGULAR_USER,
         ];
-
+        
         $this->validate ($request, $rules);
-
+        
         if ($request->has('name')) {
             $user->name = $request->name;
         }
-
+        
         if ($request->has('email') && $user->email != $request->email) {
             $user->verified = User::UNVERIFIED_USER;
             $user->verification_token = User::generateVerificationCode();
             $user->email = $request->email;
         }
-
+        
         if ($request->has('password')) {
             $user->password = bcrypt($request->password);
         }
-
+        
         if ($request->has('admin')) {
+            $this->allowedAdminAction();
             if (!$user->isVerified()) {
                 return $this->errorResponse('Only verified users can modify the admin field', 409);
             }
